@@ -39,3 +39,4 @@ composer.lock
 *.md
 yii.bat
 yii.bowerrc
+config/db.php
