@@ -1,14 +1,59 @@
 <?php
 
 namespace app\models;
-use yii\db\ActiveRecord;
 
-class User extends ActiveRecord implements \yii\web\IdentityInterface
+use Yii;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+
+
+/**
+ * This is the model class for table "users".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string|null $password
+ * @property string|null $auth_key
+ * @property string|null $access_token
+ */
+class User extends ActiveRecord implements IdentityInterface
 {
-    public static function tableName() {
-        return "users";
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'users';
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['password', 'auth_key', 'access_token'], 'default', 'value' => null],
+            [['username'], 'required'],
+            [['username'], 'string', 'max' => 55],
+            [['password', 'auth_key', 'access_token'], 'string', 'max' => 255],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'password' => 'Password',
+            'auth_key' => 'Auth Key',
+            'access_token' => 'Access Token',
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -69,6 +114,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        return Yii::$app->security->validatePassword($password, $this->password);
     }
 }
